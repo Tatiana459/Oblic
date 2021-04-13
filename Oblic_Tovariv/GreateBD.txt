@@ -1,0 +1,74 @@
+﻿Запити на створення таблиць БД «Облік руху товарів»
+
+ Create table Групи
+(Id_Gr int not null primary key identity,
+Kod_Gr int not null,
+Name_Gr nvarchar(max) not null check(Name_Gr!=''));
+
+Create table Товари
+(Id_Tov int not null primary key identity,
+Kod_Tov int not null,
+Id_Gr int foreign key references Групи,
+NameTov nvarchar(max) not null check(NameTov!=''),
+Fasovka float not null,
+Price money default 0.0);
+
+Create table Постачальники
+(Id_Post int not null primary key identity,
+Kod_Post int not null,
+FIO nvarchar(max),
+Organiz nvarchar(max),
+Phone nvarchar(20),
+Bux_Fio nvarchar(max),
+Adres nvarchar(max) not null check(Adres!=''));
+
+Create table Покупці
+(Id_Pok int not null primary key identity,
+FIO_Pok nvarchar(max),
+Organiz_Pok nvarchar(max),
+Phone_Pok nvarchar(20),
+Bux_Fio_Pok nvarchar(max),
+Adres nvarchar(max) not null check(Adres!=''));
+
+Alter table Покупці
+Add Kod_Pok int;
+
+Create table Закупівлі
+(Id_Zak int not null primary key identity,
+Id_Post int not null foreign key references Постачальники,
+Id_Gr int foreign key references Групи,
+Id_Tov int foreign key references Товари,
+Data_Zak date check (Data_Zak>=GETDATE()) default GETDATE(),
+Kolichestvo int default 0 check (Kolichestvo>=0),
+Summa money default 0.0);
+
+ALTER TABLE Закупівлі
+drop column Summa
+
+ALTER TABLE Закупівлі
+ add  Price_Z money default 0.0;
+
+ALTER TABLE Закупівлі
+drop column Data_Zak
+
+ALTER TABLE Закупівлі
+ add Data_Zak date check (Data_Zak<=GETDATE()) default GETDATE()
+
+Create table Продажі
+(Id_Prodaz int not null primary key identity,
+Id_Pok int not null foreign key references Покупці,
+Id_Gr int foreign key references Групи,
+Id_Tov int foreign key references Товари,
+Data_Pr date check (Data_Pr>=GETDATE()) default GETDATE(),
+Kolichestvo_Pr int default 0 check (Kolichestvo_Pr>=0),
+Summa_Pr money default 0.0)
+ALTER TABLE Продажі 
+drop column Data_Pr
+
+ALTER TABLE Продажі 
+ add Data_Pr date check (Data_Pr<=GETDATE()) default GETDATE()
+
+ALTER TABLE Продажі 
+drop column  Summa_Pr
+ ALTER TABLE Продажі 
+add  Price_Pr money default 0.0
